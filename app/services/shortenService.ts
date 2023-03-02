@@ -1,15 +1,24 @@
 import { uuid } from "uuidv4";
 import Url from "../models/Url";
+import { Op } from "sequelize";
+
 const slugAlreadyExists = "Url with given slug already exists.";
+const urlAlreadyExists = "Url already exists with slug: ";
 const slugDoesntExist = "Shortened url with given slug does not exist.";
 
 export const createSlug = async (req, res) => {
   const body = req.body;
   const slug = body.slug || uuid().substring(0, 4);
-  const slugExists = await Url.findOne({ where: { slug: slug } });
-  if (slugExists) {
+  const exists = await Url.findOne({
+    where: { [Op.or]: { slug, url: body.url } },
+  });
+  if (exists) {
     res.status(422);
-    return res.send(slugAlreadyExists);
+    return res.send(
+      exists.dataValues.url === body.url
+        ? urlAlreadyExists + exists.dataValues.slug
+        : slugAlreadyExists
+    );
   }
 
   const newShortenedUrl = await Url.create({ slug, url: body.url });
