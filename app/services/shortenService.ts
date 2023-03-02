@@ -62,3 +62,34 @@ export const deleteUrlBySlug = async (req, res) => {
   res.status(200);
   res.send("ok");
 };
+
+export const searchUrls = async (req, res) => {
+  const { url, slug, sortBy } = req.query;
+  const limit = Number(req.query.limit || 10);
+  const offset = Number(req.query.offset || 0);
+  const where = {
+    [Op.and]: {
+      url: { [Op.like]: `%${req.query.url || ""}%` },
+      slug: { [Op.like]: `%${req.query.slug || ""}%` },
+    },
+  };
+
+  let nextPage = "?";
+  for (let [query, value] of Object.entries({ url, slug, sortBy })) {
+    if (value) {
+      nextPage += `${query}=${value}&`;
+    }
+  }
+  nextPage += `limit=${limit}&`;
+  const previousPage = nextPage + `offset=${Math.max(offset - limit, 0)}`;
+  nextPage += `offset=${offset + limit}`;
+
+  const data = await Url.findAll({
+    where,
+    limit,
+    offset,
+    order: [[sortBy || "id", "ASC"]],
+  });
+  const response = { data, nextPage, previousPage };
+  res.send(response);
+};
