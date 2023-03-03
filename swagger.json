@@ -54,6 +54,7 @@
                         "enum": [
                             "slug",
                             "url",
+                            "hitCount",
                             "updatedAt",
                             "createdAt"
                         ]
@@ -71,6 +72,7 @@
                 "tags": [
                     "Get and be redirected to url"
                 ],
+                "description": "Important - Unable to redirect from within swagger",
                 "parameters": [
                     {
                         "name": "slug",
@@ -81,6 +83,25 @@
                 "responses": {
                     "302": {
                         "description": "Unable to redirect from within swagger"
+                    }
+                }
+            }
+        },
+        "/info/{slug}": {
+            "get": {
+                "tags": [
+                    "Get shortened url info by slug"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
                     }
                 }
             }
@@ -133,25 +154,6 @@
                 "responses": {
                     "200": {
                         "description": "Deleted"
-                    }
-                }
-            }
-        },
-        "/info/{slug}": {
-            "get": {
-                "tags": [
-                    "Get shortened url info by slug"
-                ],
-                "parameters": [
-                    {
-                        "name": "slug",
-                        "in": "path",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
                     }
                 }
             }
