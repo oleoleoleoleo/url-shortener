@@ -22,26 +22,27 @@ export const createSlug = async (req, res) => {
   }
 
   const newShortenedUrl = await Url.create({ slug, url: body.url });
-
+  res.status(201);
   res.send(newShortenedUrl.dataValues);
 };
 
 export const retrieveUrlBySlug = async (req, res) => {
-  const slug = req.params.slug;
+  const { slug } = req.params;
   const url = slug ? await Url.findOne({ where: { slug } }) : null;
   if (!url) {
     res.status(422);
     return res.send(slugDoesntExist);
   }
   await Url.update(
-    { hitCount: url.dataValues.hitCount + 1, latestHit: Date.now() },
+    { hitCount: url.dataValues.hitCount + 1 },
     { where: { slug } }
   );
-  res.redirect(url.dataValues.url);
+
+  res.redirect(302, url.dataValues.url);
 };
 
 export const getInfoBySlug = async (req, res) => {
-  const slug = req.params.slug;
+  const { slug } = req.params;
   console.log("slug is ", slug);
   const url = slug ? await Url.findOne({ where: { slug } }) : null;
   if (!url) {
@@ -52,7 +53,7 @@ export const getInfoBySlug = async (req, res) => {
 };
 
 export const deleteUrlBySlug = async (req, res) => {
-  const slug = req.body.slug;
+  const { slug } = req.body;
   const url = slug ? await Url.findOne({ where: { slug } }) : null;
   if (!url) {
     res.status(422);

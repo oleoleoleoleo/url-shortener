@@ -10,7 +10,6 @@ const Url = sequelize.define("urls", {
   },
   slug: { type: DataTypes.STRING, allowNull: false },
   url: { type: DataTypes.STRING, allowNull: false },
-  latestHit: { field: "latest_hit", type: DataTypes.DATE },
   hitCount: { field: "hit_count", type: DataTypes.INTEGER },
   createdAt: {
     field: "created_at",
